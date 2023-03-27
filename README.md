@@ -30,7 +30,7 @@ Start QEMU GDB server first:
 
 `$ ./start-gdb-server-qemu.sh`
 
-Open another terminal and run the script `start-gdb-client.sh` or `start-gdb-client-with-svd-tools.sh` to start GDB program:
+Open another terminal window and run the script `start-gdb-client.sh` or `start-gdb-client-with-svd-tools.sh` to start GDB program:
 
 `$ ./start-gdb-client.sh`
 
@@ -63,9 +63,9 @@ r2             0x2                 2
 ...
 ```
 
-## Flash on real nRF51822 or _Micro:Bit v1_
+## Flash on the real nRF51822 or _Micro:Bit v1_
 
-Make sure that the nRF51822 or _Micro:Bit v1_ is connected to DAPLINK debugger (hardware) via the SWD wires first.
+Make sure that the nRF51822 is connected to DAPLINK debugger (hardware) via the SWD wires first. If you have _Micro:Bit v1_ board, simply use a USB cable to connect it to your computer.
 
 ```bash
 # openocd default scripts location "/usr/share/openocd/scripts"
@@ -79,7 +79,35 @@ openocd -f interface/cmsis-dap.cfg  -f target/nrf51.cfg -c "program main.elf ver
 
 Note that the program binary is placed at 0x00000000, not at 0x08000000 as is usual for STM32 serial chips.
 
-## Debug on real nRF51822 or _Micro:Bit v1_
+Note that the program binary is placed at 0x00000000, not at 0x08000000 as is usual for STM32 serial chips.
+
+When the flash is successful, some of the output is shown as below:
+
+```text
+Info : auto-selecting first available session transport "swd". To override use 'transport select <transport>'.
+Info : CMSIS-DAP: SWD  Supported
+Info : CMSIS-DAP: FW Version = 1.10
+Info : CMSIS-DAP: Interface Initialised (SWD)
+Info : SWCLK/TCK = 1 SWDIO/TMS = 1 TDI = 0 TDO = 0 nTRST = 0 nRESET = 1
+Info : CMSIS-DAP: Interface ready
+Info : clock speed 1000 kHz
+Info : SWD DPIDR 0x0bb11477
+Info : nrf51.cpu: hardware has 4 breakpoints, 2 watchpoints
+Info : starting gdb server for nrf51.cpu on 3333
+Info : Listening on port 3333 for gdb connections
+target halted due to debug-request, current mode: Thread
+xPSR: 0xc1000000 pc: 0x000002ec msp: 0x20004000
+** Programming Started **
+Info : nRF51822-QFAA(build code: H2) 256kB Flash, 16kB RAM
+Warn : Adding extra erase range, 0x000000d8 .. 0x000003ff
+** Programming Finished **
+** Verify Started **
+** Verified OK **
+** Resetting Target **
+shutdown command invoked
+```
+
+## Debug on the real nRF51822 or _Micro:Bit v1_
 
 Start OpenOCD GDB server first:
 
@@ -88,7 +116,7 @@ Start OpenOCD GDB server first:
 openocd -f interface/cmsis-dap.cfg  -f target/nrf51.cfg -s "/usr/share/openocd/scripts"
 ```
 
-Open another terminal and run the following commands:
+Open another terminal window and run the following commands:
 
 ```bash
 $ arm-none-eabi-gdb main.elf \
