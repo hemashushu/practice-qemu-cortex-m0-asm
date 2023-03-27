@@ -1,7 +1,3 @@
-    .syntax unified
-    .cpu cortex-m0
-    .arch armv6-m
-
     /**
      * ARM Directives
      * https://sourceware.org/binutils/docs/as/ARM-Directives.html
@@ -11,11 +7,19 @@
      * https://sourceware.org/binutils/docs/as/ARM_002dInstruction_002dSet.html
      */
 
+    .syntax unified
+    .cpu cortex-m0
+    .arch armv6-m
+    .thumb
+
+    /**
+     * The following are the  ARM Cortex-M vectors (i.e. the exception handlers)
+     */
+
     .section .vector_table.vectors
-    .align 2
     .globl __isr_vector
 __isr_vector:
-    .long   _estack                  /* Top of Stack */
+    /* .long   _estack */                 /* Top of Stack */
     .long   Reset_Handler
     .long   NMI_Handler
     .long   HardFault_Handler
@@ -32,7 +36,7 @@ __isr_vector:
     .long   PendSV_Handler
     .long   SysTick_Handler
 
-  /* External Interrupts */
+    /* External Interrupts */
     .long   POWER_CLOCK_IRQHandler
     .long   RADIO_IRQHandler
     .long   UART0_IRQHandler
@@ -68,19 +72,23 @@ __isr_vector:
 
     .size __isr_vector, . - __isr_vector
 
-/* program start */
+    /**
+     * Instructions that were executed after the chip reset or power on
+     */
 
     .section .text
-    .thumb
 
     .thumb_func
-    .align 1
     .globl Reset_Handler
     .type Reset_Handler, %function
 Reset_Handler:
     b   _start
     b   .
     .size   Reset_Handler, . - Reset_Handler
+
+    /**
+     * The program entry `_start`, it was called by `Reset_Handler`
+     */
 
     .thumb_func
     .globl _start
@@ -94,7 +102,9 @@ _start:
 
     .section .text
 
-/* Dummy Exception Handlers (infinite loops which can be modified) */
+    /**
+     * Dummy Exception Handlers (infinite loops which can be modified)
+     */
 
     .weak   NMI_Handler
     .type   NMI_Handler, %function
@@ -131,7 +141,7 @@ SysTick_Handler:
     .size   SysTick_Handler, . - SysTick_Handler
 
 
-/* IRQ Handlers */
+    /* Default IRQ Handlers */
 
     .globl  Default_Handler
     .type   Default_Handler, %function
@@ -139,7 +149,7 @@ Default_Handler:
     b       .
     .size   Default_Handler, . - Default_Handler
 
-/* macro */
+    /* Macros */
 
     .macro  IRQ handler
     .weak   \handler
@@ -172,5 +182,5 @@ Default_Handler:
     IRQ  SWI4_IRQHandler
     IRQ  SWI5_IRQHandler
 
-/* end of this assembly file */
-  .end
+    /* end of this assembly file */
+    .end

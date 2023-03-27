@@ -29,10 +29,9 @@ arm-none-eabi-gcc \
     -mcpu=cortex-m0 \
     -mthumb \
     -mfloat-abi=soft \
-    -Wall -Wextra \
+    -Wall \
+    -Wextra \
     -g \
-    -I vendor-sdk/modules/nrfx/mdk \
-    -I vendor-sdk/components/toolchain/cmsis/include \
     --specs=nosys.specs \
     --specs=nano.specs \
     -nostartfiles \

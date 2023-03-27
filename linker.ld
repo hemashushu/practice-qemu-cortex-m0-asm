@@ -24,17 +24,17 @@ EXTERN(Reset_Handler);
 SECTIONS
 {
   /* The vector table goes at the start of flash. */
-  /*
   .vector_table :
   {
+    LONG(_estack);
+
     KEEP(*(.vector_table.vectors));
   } >FLASH
-  */
 
   /* The 'text' section contains the main program code. */
-  .text : ALIGN(4)
+  .text : /* ALIGN(4) */
   {
-    KEEP(*(.vector_table.vectors));
+    /* KEEP(*(.vector_table.vectors)); */
     *(.text .text.*);
   } >FLASH
 
