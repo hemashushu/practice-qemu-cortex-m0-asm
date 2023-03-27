@@ -133,31 +133,30 @@ gdb> x/8i $pc
 You should see a result that looks like this:
 
 ```text
-(gdb) x/8i $pc
-=> 0xc0 <Reset_Handler>:        b.n     0xc4 <_start>
-   0xc2 <Reset_Handler+1>:      b.n     0xc2 <Reset_Handler+1>
-   0xc4 <_start>:       movs    r0, #0
-   0xc6 <_start+1>:     movs    r1, #1
-   0xc8 <_start+3>:     movs    r2, #2
-   0xca <_start+5>:     bkpt    0x0000
-   0xcc <NMI_Handler>:  b.n     0xcc <NMI_Handler>
-   0xce <HardFault_Handler>:    b.n     0xce <HardFault_Handler>
+(gdb) x/6i $pc
+=> 0xcc <Reset_Handler>:        b.n     0xd0 <_start>
+   0xce <Reset_Handler+1>:      b.n     0xce <Reset_Handler+1>
+   0xd0 <_start>:       movs    r0, #0
+   0xd2 <_start+1>:     movs    r1, #1
+   0xd4 <_start+3>:     movs    r2, #2
+   0xd6 <_start+5>:     bkpt    0x0000
 ```
 
 Then try to run some GDB commands, e.g.
 
 ```gdb
 (gdb) si
-97          movs r0, #0
+Reset_Handler () at main.S:37
+37          movs r0, #0
 (gdb) si
-98          movs r1, #1
+_start () at main.S:38
+38          movs r1, #1
 (gdb) si
-99          movs r2, #2
+39          movs r2, #2
 (gdb) i r r0
 r0             0x0                 0
 (gdb) i r r1
 r1             0x1                 1
-(gdb)
 ```
 
 Enter command `q` to exit GDB.
