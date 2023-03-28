@@ -37,7 +37,7 @@ _start:
     movs r0, #0
     movs r1, #1
     movs r2, #2
-    bkpt
+    b    .
     .size   _start, . - _start
 
     /* end of this assembly file */

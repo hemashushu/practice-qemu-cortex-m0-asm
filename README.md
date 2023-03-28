@@ -30,20 +30,21 @@ Start QEMU GDB server first:
 
 `$ ./start-gdb-server-qemu.sh`
 
-Open another terminal window and run the script `start-gdb-client.sh` or `start-gdb-client-with-svd-tools.sh` to start GDB program:
+Open another terminal window and run the script `start-gdb-client-qemu.sh` or `start-gdb-client-qemu-with-svd-tools.sh` to start GDB program:
 
-`$ ./start-gdb-client.sh`
+`$ ./start-gdb-client-qemu.sh`
 
 The processor should now halt on the instruction `Reset_Handler: b _start`, enter the following GDB command to confirm:
 
 ```gdb
 (gdb) x/6i $pc
-=> 0xc0 <Reset_Handler>:        b.n     0xc4 <_start>
-   0xc2 <Reset_Handler+1>:      b.n     0xc2 <Reset_Handler+1>
-   0xc4 <_start>:       movs    r0, #0
-   0xc6 <_start+1>:     movs    r1, #1
-   0xc8 <_start+3>:     movs    r2, #2
-   0xca <_start+5>:     bkpt    0x0000
+=> 0xcc <Reset_Handler>:        b.n     0xd0 <_start>
+   0xce <Reset_Handler+1>:
+    b.n 0xce <Reset_Handler+1>
+   0xd0 <_start>:       movs    r0, #0
+   0xd2 <_start+1>:     movs    r1, #1
+   0xd4 <_start+3>:     movs    r2, #2
+   0xd6 <_start+5>:     b.n     0xd6 <_start+5>
 ```
 
 Then try to run some GDB commands, e.g.
@@ -55,7 +56,7 @@ r1             0x0                 0
 r2             0x0                 0
 ...
 (gdb) si 4
-100         bkpt
+40          b    .
 (gdb) i r
 r0             0x0                 0
 r1             0x1                 1
@@ -65,7 +66,7 @@ r2             0x2                 2
 
 ## Flash on the real nRF51822 or _Micro:Bit v1_
 
-Make sure that the nRF51822 is connected to DAPLINK debugger (hardware) via the SWD wires first. If you have _Micro:Bit v1_ board, simply use a USB cable to connect it to your computer.
+Make sure that the nRF51822 is connected to DAPLINK debugger (hardware) via the SWD wires first. If you have _Micro:Bit v1_ board, just simply use a USB cable to connect it to your computer.
 
 ```bash
 # openocd default scripts location "/usr/share/openocd/scripts"
@@ -76,8 +77,6 @@ openocd -f interface/cmsis-dap.cfg  -f target/nrf51.cfg -c "program main.elf ver
 # flash BIN
 #openocd -f interface/cmsis-dap.cfg -f target/nrf51.cfg -c "program main.bin verify reset exit 0x00000000"
 ```
-
-Note that the program binary is placed at 0x00000000, not at 0x08000000 as is usual for STM32 serial chips.
 
 Note that the program binary is placed at 0x00000000, not at 0x08000000 as is usual for STM32 serial chips.
 
@@ -126,20 +125,13 @@ $ arm-none-eabi-gdb main.elf \
 
 Then try to print memory content with GDB `x` command:
 
-```gdb
-gdb> x/8i $pc
-```
-
-You should see a result that looks like this:
-
 ```text
-(gdb) x/6i $pc
+(gdb) x/5i $pc
 => 0xcc <Reset_Handler>:        b.n     0xd0 <_start>
    0xce <Reset_Handler+1>:      b.n     0xce <Reset_Handler+1>
    0xd0 <_start>:       movs    r0, #0
    0xd2 <_start+1>:     movs    r1, #1
    0xd4 <_start+3>:     movs    r2, #2
-   0xd6 <_start+5>:     bkpt    0x0000
 ```
 
 Then try to run some GDB commands, e.g.
